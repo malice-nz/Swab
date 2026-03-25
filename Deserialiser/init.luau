@@ -5,7 +5,7 @@ local Deserialiser = {}
 
 function Deserialiser.Deserialise(Bytecode, EncodeKey)
 	local R = Reader.New(Bytecode)
-	local Key = EncodeKey or 1
+	local Key = EncodeKey or 203
 
 	local Version = R:ReadU8()
 	if Version == 0 then

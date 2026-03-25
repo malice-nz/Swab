@@ -1,2 +1,12 @@
-dist/Swab.luau
-brix.toml
+# Luau
+*.luac
+
+# IDE
+.vscode/
+*.swp
+*.sln
+*.vcxproj*
+
+# OS
+Thumbs.db
+.DS_Store
