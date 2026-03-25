@@ -315,9 +315,15 @@ FormatFunction = function(State, FuncIndex, DeclName)
 	State.Output = {}
 	State.AssignedLocals = {}
 
-	local Structured = if State.StructuredCache and State.StructuredCache[FuncIndex]
-		then State.StructuredCache[FuncIndex]
-		else ExpressionFolding.Fold(ControlFlow.Recover(LiftedFunc))
+	local Structured
+	if State.StructuredCache and State.StructuredCache[FuncIndex] then
+		Structured = State.StructuredCache[FuncIndex]
+	else
+		local ok, Result = pcall(function()
+			return ExpressionFolding.Fold(ControlFlow.Recover(LiftedFunc))
+		end)
+		Structured = if ok then Result else {}
+	end
 	if DeclName then
 		table.insert(State.Output, `function {DeclName}({table.concat(ParamNames, ", ")})\n`)
 	else
@@ -538,7 +544,9 @@ function Formatter.Format(Chunk, LiftedFunctions, MainIndex)
 		if os.clock() > ScanDeadline then return end
 		local Lifted = LiftedFunctions[FuncIdx]
 		if not Lifted then return end
-		local ok, Structured = pcall(ExpressionFolding.Fold, ControlFlow.Recover(Lifted, ScanDeadline))
+		local ok, Structured = pcall(function()
+			return ExpressionFolding.Fold(ControlFlow.Recover(Lifted, ScanDeadline))
+		end)
 		if not ok then return end
 		State.StructuredCache = State.StructuredCache or {}
 		State.StructuredCache[FuncIdx] = Structured
@@ -587,8 +595,15 @@ function Formatter.Format(Chunk, LiftedFunctions, MainIndex)
 	local LiftedMain = LiftedFunctions[MainIndex]
 	if not LiftedMain then return "" end
 
-	local Structured = State.StructuredCache and State.StructuredCache[MainIndex]
-		or ExpressionFolding.Fold(ControlFlow.Recover(LiftedMain, os.clock() + 15))
+	local Structured
+	if State.StructuredCache and State.StructuredCache[MainIndex] then
+		Structured = State.StructuredCache[MainIndex]
+	else
+		local ok, Result = pcall(function()
+			return ExpressionFolding.Fold(ControlFlow.Recover(LiftedMain, os.clock() + 15))
+		end)
+		Structured = if ok then Result else {}
+	end
 	FormatBlock(State, Structured, MainIndex)
 	return table.concat(State.Output)
 end
