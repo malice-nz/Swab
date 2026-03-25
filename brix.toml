@@ -1,0 +1,38 @@
+[package]
+name = "Swab"
+version = "1.0.0"
+entry = "init.luau"
+out = "dist/Swab.luau"
+
+[build]
+minify = false
+treeshake = false
+strip_types = false
+strip_pragmas = true
+insert_pragmas = ["--!native", "--!optimize 2"]
+validate = true
+source_map = false
+
+[modules]
+"ControlFlow" = "ControlFlow.luau"
+"Deserialiser/Constant" = "Deserialiser/Constant.luau"
+"Deserialiser/Function" = "Deserialiser/Function.luau"
+"Deserialiser/Instruction" = "Deserialiser/Instruction.luau"
+"Deserialiser/Reader" = "Deserialiser/Reader.luau"
+"Deserialiser/init" = "Deserialiser/init.luau"
+"ExpressionFolding" = "ExpressionFolding.luau"
+"Formatter" = "Formatter.luau"
+"Lifter/BlockDiscovery" = "Lifter/BlockDiscovery.luau"
+"Lifter/Instruction" = "Lifter/Instruction.luau"
+"Lifter/init" = "Lifter/init.luau"
+"Opcodes" = "Opcodes.luau"
+"init" = "init.luau"
+
+[modules.exports]
+# Add exports here: ExportName = "module_key"
+
+[modules.exclude]
+patterns = ["test/**", "spec/**", "*.spec.luau", "*.test.luau", "benchmark/**"]
+
+[modules.aliases]
+# Add path aliases here: "@lib" = "CLib/"
